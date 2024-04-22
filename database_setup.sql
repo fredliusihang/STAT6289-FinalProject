@@ -73,5 +73,20 @@ CREATE TABLE review (
     FOREIGN KEY (listing_id) REFERENCES listing(id)
 );
 
+CREATE TABLE reviews_content (
+    listing_id BIGINT,
+    id BIGINT,
+    date DATE,
+    reviewer_id INT,
+    reviewer_name VARCHAR(255),
+    comments TEXT
+);
 
+LOAD DATA INFILE 'C:/ProgramData/MySQL/MySQL Server 8.0/Uploads/reviews.csv'
+INTO TABLE reviews_content
+CHARACTER SET latin1
+FIELDS TERMINATED BY ','
+ENCLOSED BY '"'
+LINES TERMINATED BY '\n'
+IGNORE 1 LINES;
 
