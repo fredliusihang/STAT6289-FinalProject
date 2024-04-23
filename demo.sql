@@ -5,11 +5,13 @@ USE airbnb;
 -- Select all data from the table
 SELECT * FROM airbnb.host;
 
-
+#Sample query for WHERE
 -- Select all columns where host_is_superhost is true
 SELECT * FROM airbnb.host WHERE host_is_superhost = 1;
 
--- Select listing name, price, property type where review_scores_rating in review table is greater than 4.8
+#Sample query for Inner JOIN and ORDER BY
+# Select listing name, price, property type where review_scores_rating in review table 
+# is greater than 4.8, order by price in descending order.
 SELECT 
     l.name, 
     l.price, 
@@ -17,239 +19,212 @@ SELECT
 FROM airbnb.listing l
 JOIN airbnb.review r 
     ON l.id = r.listing_id
-WHERE r.review_scores_rating > 4.8;
+WHERE r.review_scores_rating > 4.8
+ORDER BY l.price DESC;
 
-
--- Filter data using WHERE clause
-SELECT * FROM employees WHERE age > 30;
-
--- Sort data using ORDER BY clause
-SELECT * FROM employees ORDER BY salary DESC;
-
--- Calculate the average salary
-SELECT AVG(salary) AS average_salary FROM employees;
-
--- Count the number of employees
-SELECT COUNT(*) AS total_employees FROM employees;
-
--- Group data using GROUP BY clause
-SELECT age, COUNT(*) AS count FROM employees GROUP BY age;
-
--- Join two tables
-SELECT e.name, d.department_name
-FROM employees e
-JOIN departments d ON e.department_id = d.id;
-
-
-
-
-
-
-
-
-
-
-
-
-
-#SELECT
-#Select all columns from payments.
-USE sql_invoicing;
-SELECT * FROM payments;
-
-#SELECT
-#Select all columns from offices.
-SELECT * FROM sql_hr.offices;
-
-#WHERE
-#Select all columns from products where quantity in stock is greater than 50.
-SELECT * FROM sql_store.products
-WHERE quantity_in_stock > 70;
-
-#WHERE
-#Select all columns from orders where customer id is 2.
-USE sql_store;
-SELECT * FROM orders
-WHERE customer_id = 2;
-
-#ORDER BY
-#Select all columns from order_items where quantity greater than 5 and order by unit price from high to low.
-SELECT * FROM sql_store.order_items
-WHERE quantity > 5
-ORDER BY unit_price DESC;
-
-#AND, OR, and NOT Operators
-#Select all columns from customers where the customer has more than 1200 points or if the customer is born after 1990-01-01 and from Florida.
-SELECT * FROM sql_store.customers
-WHERE points >= '1200' OR
-    (birth_date > '1990-01-01' AND state = 'FL');
-
-#Select all columns from products where the quantity in stock is smaller than 50 and unit price times question is smaller than 100.
-SELECT * FROM sql_store.products
-WHERE quantity_in_stock < 50 AND unit_price*quantity_in_stock < 100;
-
-
-#IN
-#Select all columns from order_items where the product id is not 2, 3, 4.
-SELECT * FROM sql_store.order_items
-WHERE product_id NOT IN (2, 3, 4);
-
-#Select all columns from order_items where quantity is 2, 4, 5.
-SELECT * FROM sql_store.order_items
-WHERE quantity IN (2, 4, 5);
-
-#Select all columns from customers where last name ends with y.
-USE sql_store;
-SELECT * FROM customers
-WHERE last_name LIKE '%y';
-
-#Inner Join
-#Join all columns from products and order_items using product_id
-SELECT * FROM products
-JOIN order_items
-    on products.product_id = order_items.product_id;
-
-#Inner Join using alias
-#Join order and customers using customer_id and select order_id, customer_id, order_date, and shipped_date.
-USE sql_store;
-SELECT order_id, o.customer_id, order_date, shipped_date
-FROM orders o
-JOIN customers c ON o.customer_id = c.customer_id
-
-#Join across two databases
-#Join products from sql_inventory and order_items from sql_store using product_id.
-USE sql_inventory;
-SELECT *
-FROM sql_store.order_items oi
-JOIN products p
-    ON oi.product_id = p.product_id
-
-#Join with 3 tables
-#Join products and order_items using product_id and join order_item_notes using order_id.
-USE sql_store;
-SELECT *
-FROM products p
-JOIN order_items oi
-    ON p.product_id = oi.product_id
-JOIN order_item_notes oin
-    ON oi.order_id = oin.order_id
-
-#Join with the table itself
-#Join offices with itself using office_id.
-USE sql_hr;
+#Sample query for AND, OR, NOT
+# Select listing name, price, property type where review_scores_rating in review table
+# is greater than 4.8 and price is less than 100 or property type is house.
 SELECT 
-    o.office_id,
-    o.address,
-    f.city
-FROM offices o
-JOIN offices f
-    ON o.office_id = f.office_id;
+    l.name, 
+    l.price, 
+    l.property_type
+FROM airbnb.listing l
+JOIN airbnb.review r 
+    ON l.id = r.listing_id
+WHERE (r.review_scores_rating > 4.8 AND l.price < 200) OR l.property_type = 'House';
 
-#Join with two conditions
-USE sql_store;
-SELECT *
-FROM order_items oi
-JOIN order_item_notes oin
-    ON oi.order_id = oin.order_id
-    AND oi.product_id = oin.product_id;
-
-#Right outer join product with order items.
-USE sql_store;
-SELECT
-    p.product_id,
-    p.name,
-    oi.order_id
-FROM products p
-RIGHT JOIN order_items oi 
-    ON p.product_id = oi.product_id
-ORDER BY p.product_id
-
-
-#Left outer join
-SELECT
-    p.product_id,
-    p.name,
-    oi.order_id
-FROM products p
-LEFT JOIN order_items oi 
-    ON p.product_id = oi.product_id
-ORDER BY p.product_id
-
-#Using
+#Sample query for IN or NOT IN
+# Slect host location, host acceptance rate, host response rate where location is in 
+# Washington DC, Arlington VA, Alexandria VA
 SELECT 
-    p.product_id,
-    oi.order_id
-FROM products p
-JOIN order_items oi
-    USING (product_id)
+    host_location, 
+    host_acceptance_rate, 
+    host_response_rate
+FROM airbnb.host
+WHERE host_location IN ('Washington, DC', 'Arlington, VA', 'Alexandria, VA');
 
-#Using
-USE sql_invoicing;
-SELECT *
-FROM clients c 
-JOIN invoices i 
-    USING (client_id);
-
-#Insert the fifth payment method to payment_methods 
-USE sql_invoicing;
-INSERT INTO payment_methods (payment_method_id, name)
-VAlues (5, 'check')
-
-#Update a single row
-#Update the phone number for client with client_id = 1
-USE sql_invoicing;
-UPDATE clients
-SET phone = '123-456-7890'
-WHERE client_id = 1
+#Sample query for LIKE
+#Select host id, name, about from host where host name ends with y.
+SELECT host_id, host_name, host_about
+FROM airbnb.host
+WHERE host_name LIKE '%y';
 
 
-#Update multiple rows
-#Update unit price for products with in stock quantity less than 20.
-USE sql_inventory;
-UPDATE products
-SET unit_price = unit_price + 10
-WHERE quantity_in_stock < 20;
-
-#Update multiple rows
-#Update payment total and payment date for any row with null payment date.
-USE sql_invoicing;
-UPDATE invoices
-SET payment_total = invoice_total - 50,
-    payment_date = due_date
-WHERE payment_date IS NULL;
-
-#Increase unite price by 20 for products with product_id 1, 2, 4.
-USE sql_store;
-UPDATE products
-SET unit_price = unit_price + 20
-WHERE product_id IN (1, 2, 4);
-
-#Subqueries
-#Change payment total to 70% of invoice total for client Yadel.
-USE sql_invoicing;
-UPDATE invoices
-SET 
-    payment_total = invoice_total * 0.7,
-    payment_date = due_date
-WHERE client_id = 
-    (SELECT client_id
-    From clients
-    WHERE name = 'Yadel')
+# Sample query for join with 3 tables
+# Select listing name, listing price, property type from listing, review score rating from 
+# review, and host location from host, where review score rating is greater than 4.8 and host 
+# location is in Washington DC, Arlington VA, Alexandria VA
+SELECT 
+    l.name, 
+    l.price, 
+    l.property_type,
+    r.review_scores_rating,
+    h.host_location
+FROM airbnb.listing l
+JOIN airbnb.review r 
+    ON l.id = r.listing_id
+JOIN airbnb.host h
+    ON l.host_id = h.host_id
+WHERE r.review_scores_rating > 4.8 AND h.host_location IN ('Washington, DC', 'Arlington, VA', 'Alexandria, VA');
 
 
-#Subquery
-#Change payment total to 80% of invoice total for clients with names Vinte, Kwideo, and Topiclounge.
-UPDATE invoices
-SET 
-    payment_total = invoice_total * 0.8,
-    payment_date = due_date
-WHERE client_id IN 
-    (SELECT client_id
-    FROM clients
-    WHERE name IN ('Vinte', 'Kwideo', 'Topiclounge'));
+#Sample query for join with 2 conditions
+# Select neighbourhood, latitude, longitude from location and name, price, property type 
+# from listing where property type is 'Entire home' and price is less than 100. Order by 
+# price in descending order.
+SELECT 
+    loc.neighbourhood, 
+    loc.latitude, 
+    loc.longitude,
+    l.name, 
+    l.price, 
+    l.property_type
+FROM airbnb.location loc
+JOIN airbnb.listing l 
+    ON loc.latitude = l.latitude 
+    AND loc.longitude = l.longitude
+WHERE l.property_type = 'Entire home' AND l.price < 100
+ORDER BY l.price DESC;
 
-#Delete rows
-#Delete the row with employee_id 33391
-USE sql_hr;
-DELETE FROM employees
-WHERE employee_id = 56274;
+
+#Sample query for right outer join
+# Select listing name, listing price, property type from listing and review score rating from
+# review where listing id is equal to review listing id.
+SELECT 
+    l.name, 
+    l.price, 
+    l.property_type,
+    r.review_scores_rating
+FROM airbnb.listing l
+RIGHT JOIN airbnb.review r 
+    ON l.id = r.listing_id;
+
+#Sample query for left outer join
+# Select listing name, listing price, property type from listing and review score rating from
+# review where listing id is equal to review listing id.
+SELECT 
+    l.name, 
+    l.price, 
+    l.property_type,
+    r.review_scores_rating
+FROM airbnb.listing l
+LEFT JOIN airbnb.review r 
+    ON l.id = r.listing_id;
+
+#Sample query for Insert
+# Insert a new row into the host table with host id 100, host name 'John', host location 'Washington, DC',
+# host about 'I am a host', host response rate 100, host acceptance rate 100, host is superhost 1.
+INSERT INTO airbnb.host (host_id, host_name, host_location, host_about, host_response_rate, host_acceptance_rate, host_is_superhost)
+VALUES (100, 'John', 'Washington, DC', 'I am a host', 100, 100, 1);
+#Remove a row from the host table where host id is 100.
+DELETE FROM airbnb.host WHERE host_id = 100;
+
+#Sample query for Update
+# Update host location to 'New York, NY' where host id is 4492.
+UPDATE airbnb.host
+SET host_location = 'New York, NY'
+WHERE host_id = 4492;
+
+#Sample query for Updating multiple rows
+#Update host_is_superhost to 1 where host_location is Washington, DC.
+UPDATE airbnb.host
+SET host_is_superhost = 1
+WHERE host_location = 'Washington, DC';
+
+# Sample query for Subquery and SET
+# Update price to 10% of price where neighbourhood in location table is LIKE Washington.
+UPDATE airbnb.listing AS l
+JOIN airbnb.location AS loc
+    ON l.latitude = loc.latitude AND l.longitude = loc.longitude
+SET l.price = l.price * 0.1
+WHERE loc.neighbourhood LIKE '%Washington%';
+
+    
+# Sample query for delete rows
+# Delete rows from host table where host location is Washington, DC.
+DELETE FROM airbnb.host WHERE host_location = 'Washington, DC';
+
+# Sample query for Group By
+# Select neighbourhood, count of neighbourhood from location table.
+SELECT neighbourhood, COUNT(neighbourhood) AS count
+FROM airbnb.location
+GROUP BY neighbourhood;
+
+# Sample query for Group by and Having
+# Select host location, count of host location from host table where count of host 
+# location is greater than 1.
+SELECT host_location, COUNT(host_location) AS count
+FROM airbnb.host
+GROUP BY host_location
+HAVING COUNT(host_location) > 1;
+
+#Sample query for View
+# Create a view called 'listing_view' that contains listing id, name, price, property type 
+# from listing table.
+CREATE VIEW listing_view 
+AS SELECT id, name, price, property_type
+FROM airbnb.listing
+WHERE price < 100
+WITH CHECK OPTION;
+#Drop the view
+DROP VIEW listing_view;
+#Look at the view
+SELECT * FROM listing_view;
+# Update price to 150 for listing with id 3686
+UPDATE listing_view SET price = 150
+WHERE id = 3686;
+
+# Create sample tables to test for constraints
+#Create a table called sample listing that contains id, price, property type
+CREATE TABLE sample_listing (
+    id BIGINT,
+    price DECIMAL(10, 2),
+    property_type VARCHAR(255),
+    PRIMARY KEY (id)
+);
+CREATE TABLE customer_reservation (
+    customer_id INT,
+    listing_id BIGINT,
+    name VARCHAR(255),
+    date DATE,
+    property_type VARCHAR(255),
+    PRIMARY KEY (customer_id),
+    FOREIGN KEY (listing_id) REFERENCES airbnb.sample_listing(id)
+        ON DELETE SET NULL
+        ON UPDATE CASCADE
+);
+#Insert data into sample listing table
+INSERT INTO sample_listing (id, price, property_type)
+VALUES (3686, 100, 'Private room in home'),
+       (3943, 150, 'Private room in townhouse'),
+       (4197, 200, 'Private room in home'),
+       (4529, 250, 'Private room in home'),
+       (4967, 300, 'Private room in home');
+#Insert data into customer reservation table
+INSERT INTO customer_reservation (customer_id, listing_id, name, date, property_type)
+VALUES (1, 3686, 'John', '2024-01-01', 'Private room in home'),
+       (2, 3943, 'Jane', '2024-01-02', 'Private room in townhouse'),
+       (3, 4197, 'Jack', '2024-01-03', 'Private room in home'),
+       (4, 4529, 'Jill', '2024-01-04', 'Private room in home'),
+       (5, 4967, 'Joe', '2024-01-05', 'Private room in home');
+#Test CASCADE constraints
+UPDATE airbnb.sample_listing SET id = 9000 WHERE id = 3943;
+SELECT * FROM customer_reservation WHERE customer_id = 2;
+#Should see the row with customer_id 2 now have listing_id 9000
+#Test SET NULL constraints
+DELETE FROM airbnb.sample_listing WHERE id = 3686;
+SELECT * FROM customer_reservation WHERE customer_id = 1;
+#Should see the row with customer_id 1 now have listing_id NULL
+
+
+#Create Index
+CREATE INDEX idx_host_location ON host (host_location(100));
+SELECT * FROM host WHERE host_location = 'Washington, DC';
+#Drop Index
+ALTER TABLE host DROP INDEX idx_host_location;
+
+
+
+
+
